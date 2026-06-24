@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An AI Booking Desk for Elgin Auto</title>
+    <meta name="description" content="An AI booking desk for Elgin Auto that answers every call and books the appointment on the spot. After hours, during the busy rush, every call. One flat monthly fee. No more lost bookings.">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="An AI Booking Desk for Elgin Auto">
+    <meta property="og:description" content="Answer every booking call, even after hours and during the rush. The AI takes the appointment, drops it in your book, and texts a confirmation. One flat monthly fee.">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="An AI Booking Desk for Elgin Auto">
+    <meta name="twitter:description" content="Pick up every booking call. Take the appointment. Drop it in your book. 24/7. One flat monthly fee.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=2">
+    <style>
+      /* Live phone transcript inside the hero phone mockup */
+      .rv-bar { display:flex; align-items:center; justify-content:space-between; padding-bottom:10px; margin-bottom:12px; border-bottom:1px solid rgba(0,0,0,0.06); }
+      .rv-brand { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:0.85rem; color:var(--ink); }
+      .rv-status { font-family:'DM Sans',sans-serif; font-size:0.62rem; color:var(--muted); display:inline-flex; align-items:center; gap:5px; letter-spacing:0.02em; }
+      .rv-dot { width:6px; height:6px; border-radius:50%; background:var(--muted); display:inline-block; flex:none; }
+      .rv-status.live .rv-dot { background:var(--accent); animation:rvpulse 1.4s ease-in-out infinite; }
+      @keyframes rvpulse { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+      .rv-chat { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:7px; padding-right:2px; }
+      .rv-chat::-webkit-scrollbar { width:0; }
+      .rv-bubble { max-width:84%; padding:8px 12px; border-radius:15px; font-size:0.78rem; line-height:1.4; word-wrap:break-word; animation:rvpop .18s ease-out; }
+      .rv-bubble.bot { background:#fff; color:var(--ink); align-self:flex-start; border-bottom-left-radius:5px; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+      .rv-bubble.user { background:var(--accent); color:#fff; align-self:flex-end; border-bottom-right-radius:5px; }
+      @keyframes rvpop { from{opacity:0; transform:translateY(4px) scale(0.98);} to{opacity:1; transform:none;} }
+      .rv-hint { margin:auto; text-align:center; font-size:0.72rem; color:var(--muted); padding:0 18px; line-height:1.5; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <div class="logo">Elgin<span> Auto</span></div>
+            <div class="nav-tag">AI Booking Desk</div>
+        </div>
+        <div class="nav-right">
+            <a href="pricing.html" class="nav-link">Pricing</a>
+            <a href="https://cal.com/ian-pilon/physiovoice-20-min-intro-call" target="_blank" rel="noopener" class="nav-cta">Book a Meeting with Ian</a>
+        </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero-grid">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    Built for Elgin Auto
+                </div>
+                <h1>Answer every call <em>without dropping what you're doing.</em></h1>
+                <p class="hero-sub">You and the team already handle the phone, and handle it well. But it rings while you're under a car, after you've closed, and on your day off. <strong>This AI picks up every time</strong>, books the appointment, and texts a confirmation. You keep every call without the phone running your day.</p>
+                <div class="hero-cta-row">
+                    <button type="button" class="cta-demo vapi-call-btn" data-state="idle"><span class="vapi-dot"></span> <span class="vapi-label">Talk to the AI in Your Browser</span></button>
+                </div>
+                <span class="cta-subtext">Talk to the AI right now in your browser. No commitment. Your mic stays off until you click.</span>
+                <div class="hero-stat-row">
+                    <div class="hero-stat">
+                        <span class="num">24/7</span>
+                        <span class="label">Picks up when you can't</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="num">1 ring</span>
+                        <span class="label">Every call answered, never voicemail</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="num">Evenings</span>
+                        <span class="label">Yours again, the phone's covered</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="rv-bar">
+                            <span class="rv-brand">Elgin Auto</span>
+                            <span class="rv-status" id="rv-status"><span class="rv-dot"></span> standby</span>
+                        </div>
+                        <div class="rv-chat" id="rv-chat">
+                            <div class="rv-hint" id="rv-hint">Tap &ldquo;Talk to the AI&rdquo; &mdash; your conversation shows up here as you speak.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TRUST BAR ===== -->
+    <section class="trust-bar">
+        <div class="trust-bar-inner">
+            <div class="trust-badge">
+                <span class="trust-icon">&#128337;</span>
+                Answers 24/7
+            </div>
+            <div class="trust-badge">
+                <span class="trust-icon">&#128197;</span>
+                Books into your calendar
+            </div>
+            <div class="trust-badge">
+                <span class="trust-icon">&#127760;</span>
+                Multilingual
+            </div>
+            <div class="trust-badge">
+                <span class="trust-icon">&#128241;</span>
+                SMS confirmations &amp; reminders
+            </div>
+            <div class="trust-badge">
+                <span class="trust-icon">&#9889;</span>
+                Live in 48 hours
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROBLEM ===== -->
+    <section class="problem">
+        <div class="problem-inner">
+            <div class="problem-label">The real cost</div>
+            <h2>It isn't that you miss calls. It's that the phone never lets you go.</h2>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <span class="icon">&#128295;</span>
+                    <h3>It rings mid-job</h3>
+                    <p>You're under a car with your hands full and the phone goes. You stop, clean up, answer, and lose your place. <span class="stat-highlight">Every call is an interruption to the work that actually pays the bills.</span></p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#127968;</span>
+                    <h3>It follows you home</h3>
+                    <p>After close, the calls keep coming. Evenings, weekends, your day off. You pick up because a missed call is a missed customer, so <span class="stat-highlight">you never really clock out.</span></p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#9201;</span>
+                    <h3>The after-hours ones slip</h3>
+                    <p>The calls that come in once you've left are the ones that actually go to voicemail. <span class="stat-highlight">Those callers don't wait</span>, they book the next shop on Google before morning.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTRAST: Without / With the AI booking desk ===== -->
+    <section class="contrast">
+        <div class="contrast-inner">
+            <div class="contrast-label">Before and after</div>
+            <h2>What changes the moment the AI picks up the phone.</h2>
+            <div class="contrast-grid">
+                <div class="contrast-card bad">
+                    <h3>Without the AI booking desk</h3>
+                    <ul>
+                        <li>You stop work to grab the phone, then have to find your place again.</li>
+                        <li>The phone follows you home. Evenings and weekends are never fully yours.</li>
+                        <li>A day off means the shop phone goes dark, or rings your cell anyway.</li>
+                        <li>After-hours callers hit voicemail and book the next shop on Google.</li>
+                        <li>No-shows because nobody confirmed the appointment the day before.</li>
+                    </ul>
+                </div>
+                <div class="contrast-card good">
+                    <h3>With the AI booking desk</h3>
+                    <ul>
+                        <li>You stay on the job. The AI takes the call and books it for you.</li>
+                        <li>Nights, weekends, and days off are covered without you on the phone.</li>
+                        <li>Every after-hours call answered in one ring, never voicemail.</li>
+                        <li>Automatic SMS confirmation and reminder before every appointment.</li>
+                        <li>Every call and booking logged, with a full transcript for you to review.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== RESEARCH CALLOUT ===== -->
+    <section class="research">
+        <div class="research-inner">
+            <div>
+                <div class="research-label">The research</div>
+                <div class="research-stat">5 min</div>
+                <div class="research-stat-label">The window where an after-hours caller can still be won back. Past that, they have already booked their car in elsewhere.</div>
+            </div>
+            <div class="research-body">
+                <h3>Speed of response is the single biggest factor in whether a caller becomes a booking.</h3>
+                <p>Multiple studies of inbound phone and web inquiries (Harvard Business Review, MIT, and the Lead Response Management Study among them) have shown a sharp drop in conversion when callers are not reached quickly. Plain English: the faster you pick up, the more likely they book. Wait an hour and most of them are already at another shop.</p>
+                <p>For an auto shop, "speed of response" really means one thing: <strong>did the phone get answered.</strong> Voicemail is not a response. A callback the next morning is not a response.</p>
+                <p>The AI answers in one ring, every time. The 5-minute window never closes because there is no window to begin with.</p>
+                <cite>Sources: HBR (Oldroyd et al.), Lead Response Management Study, MIT inbound response timing research.</cite>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SERVICES (already configured for Elgin Auto) ===== -->
+    <section class="problem" id="services">
+        <div class="problem-inner">
+            <div class="problem-label">Already trained on your shop</div>
+            <h2>The AI knows the services Elgin Auto offers.</h2>
+            <p style="text-align:center;max-width:680px;margin:-10px auto 8px;color:var(--slate);font-size:1.02rem;line-height:1.6;">It books appointments for every service on your list, in plain language, with the right details for each. Here is what it already handles.</p>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <span class="icon">&#128738;</span>
+                    <h3>Full Synthetic Oil Change</h3>
+                    <p>Oil changes <span class="stat-highlight">starting at $45.99.</span> Your engine has many moving parts, and the oil keeps them lubricated to avoid damage. We drain the old oil, remove the filter, and replace both with fresh oil and a new filter.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128736;</span>
+                    <h3>New Tires &amp; Tire Services</h3>
+                    <p>A smoothly running vehicle needs smoothly working tires. We provide a full range of tire services: <span class="stat-highlight">changes, rotation, balancing, inspection, and tread-depth checks.</span></p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#9881;</span>
+                    <h3>Transmission Services</h3>
+                    <p>A transmission is one of the most expensive components to repair or replace. Our technicians <span class="stat-highlight">detect transmission problems early</span> and fix minor faults before they turn into major damage.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128295;</span>
+                    <h3>Engine Repair</h3>
+                    <p>Engine maintenance keeps your vehicle healthy for all the driving ahead. From <span class="stat-highlight">check-engine-light diagnostics</span> to precision engine part repair, our expert mechanics are ready to help.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128679;</span>
+                    <h3>Brakes &amp; Suspension</h3>
+                    <p>It is essential to keep your brakes and suspension in top condition. We offer an <span class="stat-highlight">easy, affordable assessment</span> of your vehicle&rsquo;s braking and suspension systems.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#10052;</span>
+                    <h3>A/C &amp; Heating Repairs</h3>
+                    <p>Heating and A/C systems wear with use, and hoses can clog or leak if neglected. <span class="stat-highlight">Regular maintenance keeps them running at peak performance</span> all year round.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128197;</span>
+                    <h3>Tune-Up / Scheduled Maintenance</h3>
+                    <p>A tune-up typically replaces several wear-and-tear parts: <span class="stat-highlight">air filter, fuel filter, oxygen sensor, PCV valve, and spark plug wires.</span> Come in for your vehicle&rsquo;s scheduled maintenance.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128739;</span>
+                    <h3>Struts &amp; Shocks</h3>
+                    <p>Shocks soften the ride over rough ground; struts keep passengers from constant, uncomfortable motion. Over time they wear out. We <span class="stat-highlight">diagnose and repair worn shocks and struts.</span></p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128371;</span>
+                    <h3>Steering Work</h3>
+                    <p>Your steering and suspension work together to keep your tires on the pavement and your vehicle under control. When the wheel goes hard to move, we <span class="stat-highlight">diagnose and repair the steering system.</span></p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#127786;</span>
+                    <h3>Air Filters</h3>
+                    <p>Your cabin&rsquo;s climate control filters out airborne particles. Our technicians perform a <span class="stat-highlight">visual inspection to tell whether your cabin air filter needs replacing.</span></p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128267;</span>
+                    <h3>Battery Replacement</h3>
+                    <p>Convenient testing and replacement to get you back on the road. <span class="stat-highlight">Battery replacement, charging, installation, testing, and recycling</span> &mdash; we handle it all.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128208;</span>
+                    <h3>Wheel Alignment</h3>
+                    <p>Alignment sets your wheel angles to the manufacturer&rsquo;s specs so steering and suspension work as intended and <span class="stat-highlight">tire wear is reduced.</span> It&rsquo;s a precise job, and our experts get it right.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#127783;</span>
+                    <h3>Wiper Blade Replacement</h3>
+                    <p>We provide a range of windshield services, <span class="stat-highlight">from windshield chip repair to installing new wiper blades.</span> Stop by and we&rsquo;ll get your view clear again.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128187;</span>
+                    <h3>Diagnostics</h3>
+                    <p>Our mechanics can <span class="stat-highlight">diagnose all the electronic parts in your car.</span> For expert diagnostics on your vehicle&rsquo;s electronic systems, book an appointment.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#9889;</span>
+                    <h3>Spark Plugs</h3>
+                    <p>Every car and driver is different. Whether you need a reliable set of <span class="stat-highlight">copper replacement plugs or a performance upgrade,</span> we&rsquo;ve got you covered.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128273;</span>
+                    <h3>Ignition Systems</h3>
+                    <p>Your ignition has many small parts: pins, springs, the core cylinder, housing, and more. We <span class="stat-highlight">diagnose and repair your vehicle&rsquo;s ignition.</span></p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128268;</span>
+                    <h3>Electrical Systems</h3>
+                    <p>A poor driving experience is often a malfunctioning computer or control. <span class="stat-highlight">Trust our experts to repair your vehicle&rsquo;s electronics right the first time.</span></p>
+                </div>
+                <div class="problem-card">
+                    <span class="icon">&#128161;</span>
+                    <h3>Check-Engine Light</h3>
+                    <p>That light could be costly, like a bad catalytic converter, or minor, like a loose gas cap. We <span class="stat-highlight">pull the code and diagnose the problem for you.</span> Call or stop by the shop.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section class="how">
+        <div class="how-inner">
+            <div class="how-label">How it works</div>
+            <h2>An AI service writer that speaks plain English and never goes on break.</h2>
+            <div class="how-steps">
+                <div class="how-step">
+                    <span class="step-num">01</span>
+                    <div class="step-content">
+                        <h3>Picks up in one ring</h3>
+                        <p>The AI answers instantly with a natural, friendly voice. Mid-rush, after close, weekends, holidays. The caller hears a real conversation, not a phone tree.</p>
+                    </div>
+                </div>
+                <div class="how-step">
+                    <span class="step-num">02</span>
+                    <div class="step-content">
+                        <h3>Takes the appointment live</h3>
+                        <p>Asks what service they need, the vehicle, and a day and time, then books it into your calendar. Oil change, tires, brakes, engine or transmission work, A/C, diagnostics, and the rest of your service list. No double-bookings, no phone tag.</p>
+                    </div>
+                </div>
+                <div class="how-step">
+                    <span class="step-num">03</span>
+                    <div class="step-content">
+                        <h3>Confirms and reminds by SMS</h3>
+                        <p>A text confirmation lands on the customer's phone within seconds. A reminder goes out before the appointment. If they need to reschedule, they reply and the AI handles it. No-shows drop because nobody forgets.</p>
+                    </div>
+                </div>
+                <div class="how-step">
+                    <span class="step-num">04</span>
+                    <div class="step-content">
+                        <h3>Hands off to staff when needed</h3>
+                        <p>Big estimates, tricky diagnostics, warranty questions, or anything outside the script get transferred to a service advisor or your shop phone. Every call is logged with a full transcript and recording for review.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TIMELINE: What changes when it goes live ===== -->
+    <section class="timeline">
+        <div class="timeline-inner">
+            <div class="timeline-label">What to expect</div>
+            <h2>Here is what changes when the AI booking desk goes live.</h2>
+            <div class="timeline-grid">
+                <div class="timeline-card">
+                    <span class="timeline-tag">Week 1</span>
+                    <h3>The phone stops interrupting you.</h3>
+                    <p>From day one the AI takes the calls while you work. You stop wiping your hands to grab the phone, and the after-hours calls get answered instead of going to voicemail.</p>
+                </div>
+                <div class="timeline-card">
+                    <span class="timeline-tag">Month 1</span>
+                    <h3>You get your evenings back.</h3>
+                    <p>Nights and weekends are covered without you on call. No-shows drop as SMS reminders kick in. You notice you can actually finish a job, or dinner, without the phone going off.</p>
+                </div>
+                <div class="timeline-card">
+                    <span class="timeline-tag">Ongoing</span>
+                    <h3>You can finally step away.</h3>
+                    <p>A day off no longer means the shop goes quiet. Every call is answered and booked, customers get a smooth experience, and the phone stops running your week.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== MID-PAGE CTA ===== -->
+    <section class="mid-cta">
+        <div class="mid-cta-inner">
+            <h2>Hear the AI book a service appointment yourself</h2>
+            <p>Talk to the AI right here in your browser. Ask for a full synthetic oil change next Tuesday, or to get your brakes looked at, and watch it take the booking. Then let's talk about putting it to work for Elgin Auto.</p>
+            <div class="mid-cta-row">
+                <button type="button" class="cta-demo vapi-call-btn" data-state="idle"><span class="vapi-dot"></span> <span class="vapi-label">Talk to the AI in Your Browser</span></button>
+                <a href="https://cal.com/ian-pilon/physiovoice-20-min-intro-call" target="_blank" rel="noopener" class="cta-primary">Book a Free Meeting <span class="arrow">&rarr;</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== REVENUE LOSS CALCULATOR ===== -->
+    <section class="calculator" id="calculator">
+        <div class="calc-inner">
+            <div class="calc-head">
+                <div class="calc-label">The calls you can't get to</div>
+                <h2>And the after-hours calls still add up.</h2>
+                <p class="calc-anchor"><strong>Defaults shown</strong> reflect a small owner-run shop that answers most calls itself. Drag the sliders to match Elgin Auto.</p>
+            </div>
+            <div class="calc-grid">
+                <div class="calc-controls">
+                    <div class="calc-row">
+                        <div class="calc-row-head">
+                            <span class="calc-row-label">Calls you can't get to per month</span>
+                            <span class="calc-value-chip" id="calcMissedValue">10</span>
+                        </div>
+                        <input type="range" class="calc-slider" id="calcMissed" min="1" max="300" step="1" value="10">
+                        <div class="calc-range"><span>low end</span><span>high end</span></div>
+                    </div>
+
+                    <div class="calc-row">
+                        <div class="calc-row-head">
+                            <span class="calc-row-label">Callers who would book</span>
+                            <span class="calc-value-chip" id="calcConvertValue">80%</span>
+                        </div>
+                        <input type="range" class="calc-slider" id="calcConvert" min="20" max="100" step="5" value="80">
+                        <div class="calc-range"><span>20%</span><span>100%</span></div>
+                    </div>
+
+                    <div class="calc-row">
+                        <div class="calc-row-head">
+                            <span class="calc-row-label">Average repair order value</span>
+                            <span class="calc-value-chip" id="calcValueValue">$250</span>
+                        </div>
+                        <input type="range" class="calc-slider" id="calcValue" min="50" max="1500" step="10" value="250">
+                        <div class="calc-range"><span>$50</span><span>$1,500</span></div>
+                    </div>
+                </div>
+
+                <div class="calc-results">
+                    <div class="calc-period" id="calcPeriod" role="tablist">
+                        <button type="button" data-period="monthly" class="active">Monthly</button>
+                        <button type="button" data-period="yearly">Yearly</button>
+                    </div>
+                    <div class="result-card lost">
+                        <div class="result-tag"><span class="pill"></span> Revenue lost</div>
+                        <div class="result-sub" id="resultLostSub">Per month</div>
+                        <div class="result-amount" id="resultLostAmount">$2,000</div>
+                        <div class="result-meta">
+                            <div class="result-meta-icon">&#128222;</div>
+                            <div class="result-meta-text">
+                                <span class="result-meta-num" id="resultLostCalls">10</span>
+                                <span class="result-meta-label" id="resultLostCallsLabel">missed calls per month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-card recovered">
+                        <div class="result-tag"><span class="pill"></span> With the AI desk</div>
+                        <div class="result-sub" id="resultRecoveredSub">Revenue recovered per month</div>
+                        <div class="result-amount" id="resultRecoveredAmount">$1,400</div>
+                        <div class="result-meta">
+                            <div class="result-meta-icon">&#128197;</div>
+                            <div class="result-meta-text">
+                                <span class="result-meta-num" id="resultRecoveredBookings">6</span>
+                                <span class="result-meta-label" id="resultRecoveredBookingsLabel">extra bookings per month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="calc-footnote">This only counts the calls you actually miss. The bigger win is the hours and evenings you stop spending on the phone, which this number does not capture at all.</p>
+        </div>
+    </section>
+
+    <script>
+    (function() {
+        var PERIODS = {
+            daily:   { monthFactor: 1/30, label: 'day',   sub: 'Per day',   subRecovered: 'Revenue recovered per day' },
+            weekly:  { monthFactor: 7/30, label: 'week',  sub: 'Per week',  subRecovered: 'Revenue recovered per week' },
+            monthly: { monthFactor: 1,    label: 'month', sub: 'Per month', subRecovered: 'Revenue recovered per month' },
+            yearly:  { monthFactor: 12,   label: 'year',  sub: 'Per year',  subRecovered: 'Revenue recovered per year' }
+        };
+        var RECOVERY_RATE = 0.70;
+
+        var missed = document.getElementById('calcMissed');
+        var convert = document.getElementById('calcConvert');
+        var value = document.getElementById('calcValue');
+        var missedV = document.getElementById('calcMissedValue');
+        var convertV = document.getElementById('calcConvertValue');
+        var valueV = document.getElementById('calcValueValue');
+        var periodWrap = document.getElementById('calcPeriod');
+        var lostSub = document.getElementById('resultLostSub');
+        var lostAmount = document.getElementById('resultLostAmount');
+        var lostCalls = document.getElementById('resultLostCalls');
+        var lostCallsLabel = document.getElementById('resultLostCallsLabel');
+        var recoveredSub = document.getElementById('resultRecoveredSub');
+        var recoveredAmount = document.getElementById('resultRecoveredAmount');
+        var recoveredBookings = document.getElementById('resultRecoveredBookings');
+        var recoveredBookingsLabel = document.getElementById('resultRecoveredBookingsLabel');
+
+        var currentPeriod = 'monthly';
+
+        function fmtMoney(n) {
+            if (n >= 1000000) {
+                return '$' + (n / 1000000).toFixed(n >= 10000000 ? 0 : 1) + 'M';
+            }
+            return '$' + Math.round(n).toLocaleString('en-US');
+        }
+
+        function fmtInt(n) {
+            return Math.round(n).toLocaleString('en-US');
+        }
+
+        function update() {
+            var missedPerMonth = parseInt(missed.value, 10);
+            var convertPct = parseInt(convert.value, 10);
+            var avgValue = parseInt(value.value, 10);
+            var period = PERIODS[currentPeriod];
+
+            missedV.textContent = missedPerMonth;
+            convertV.textContent = convertPct + '%';
+            valueV.textContent = '$' + avgValue;
+
+            var callsInPeriod = missedPerMonth * period.monthFactor;
+            var lostBookings = callsInPeriod * (convertPct / 100);
+            var lostRevenue = lostBookings * avgValue;
+            var recoveredRevenue = lostRevenue * RECOVERY_RATE;
+            var recoveredBookingsCount = lostBookings * RECOVERY_RATE;
+
+            var callsDisplay = Math.round(callsInPeriod);
+            var bookingsDisplay = Math.round(recoveredBookingsCount);
+            var callNoun = callsDisplay === 1 ? 'missed call' : 'missed calls';
+            var bookingNoun = bookingsDisplay === 1 ? 'extra booking' : 'extra bookings';
+
+            lostSub.textContent = period.sub;
+            lostAmount.textContent = fmtMoney(lostRevenue);
+            lostCalls.textContent = fmtInt(callsInPeriod);
+            lostCallsLabel.textContent = callNoun + ' per ' + period.label;
+
+            recoveredSub.textContent = period.subRecovered;
+            recoveredAmount.textContent = fmtMoney(recoveredRevenue);
+            recoveredBookings.textContent = fmtInt(recoveredBookingsCount);
+            recoveredBookingsLabel.textContent = bookingNoun + ' per ' + period.label;
+        }
+
+        missed.addEventListener('input', update);
+        convert.addEventListener('input', update);
+        value.addEventListener('input', update);
+
+        periodWrap.addEventListener('click', function(e) {
+            var btn = e.target.closest('button[data-period]');
+            if (!btn) return;
+            currentPeriod = btn.getAttribute('data-period');
+            periodWrap.querySelectorAll('button').forEach(function(b) {
+                b.classList.toggle('active', b === btn);
+            });
+            update();
+        });
+
+        update();
+    })();
+    </script>
+
+    <!-- ===== FAQ ===== -->
+    <section class="faq">
+        <div class="faq-inner">
+            <div class="faq-label">Common questions</div>
+            <h2>Everything a shop owner asks before they sign up.</h2>
+
+            <div class="faq-item">
+                <h3>Will it sound like a robot? My customers will hate that.</h3>
+                <p>Try the live demo and judge for yourself. The voice is warm, natural, and conversational. Most callers do not realize they are speaking to an AI until you tell them. If a customer insists on a human, the AI hands off to your shop phone.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Does it work with my booking system?</h3>
+                <p>Yes. It books into Google Calendar out of the box, and connects to common shop scheduling tools. If you take appointments by phone and a paper book today, we can set you up on a simple calendar in an afternoon.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>What languages does it speak?</h3>
+                <p>English, French, Spanish, Hindi, Punjabi, Mandarin, Cantonese, Arabic, Portuguese, and more. If your customers speak it, the AI can answer in it. You pick which languages are active.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>What happens when someone needs a real estimate or the manager?</h3>
+                <p>The AI knows when to step aside. Big estimates, tricky diagnostics, warranty questions, vendor calls, or anything outside a standard booking get transferred to a real person at the shop. Every call is logged with a transcript.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>How fast can I be live?</h3>
+                <p>Most shops are taking real bookings within 48 hours. We handle the setup, connect it to your calendar, train the AI on your hours, your service list and pricing basics, and any special policies, and run a test call with you before flipping it on.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CLOSING ===== -->
+    <section class="closing">
+        <h2>Keep every call. Keep your evenings.</h2>
+        <p>The AI picks up when you're busy and after you've gone home, books the appointment, and texts a confirmation. You stay focused on the work, and the phone stops running your day.</p>
+        <p class="closing-pricing"><strong>$299 a month flat.</strong> No setup fee, no per-call charges. <a href="pricing.html">See full pricing &rarr;</a></p>
+        <div class="closing-cta-row">
+            <a href="https://cal.com/ian-pilon/physiovoice-20-min-intro-call" target="_blank" rel="noopener" class="cta-closing">Book Your Free Meeting <span class="arrow">&rarr;</span></a>
+            <button type="button" class="cta-closing-demo vapi-call-btn" data-state="idle"><span class="vapi-label">Talk to the AI in Your Browser</span></button>
+        </div>
+    </section>
+
+    <footer>
+        <p>An AI booking desk for Elgin Auto. Built by Ian Pilon.</p>
+    </footer>
+
+    <script>
+      // After deploying your own Worker, paste its URL here (e.g. https://elgin-brain.<you>.workers.dev).
+      // For now this points at an existing generic Groq/Deepgram proxy so the demo runs immediately.
+      window.RESERVE_CONFIG = { workerUrl: "https://reservevoice-brain.ianpilon.workers.dev" };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.wasm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.29/dist/bundle.min.js"></script>
+    <script type="module" src="voice.js?v=3"></script>
+</body>
+</html>
