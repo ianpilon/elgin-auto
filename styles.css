@@ -1856,3 +1856,6 @@ footer p {
 
 /* during an active/connecting call, hide the other demo buttons so only one "End Call" shows */
 .vapi-hidden { display: none !important; }
+
+/* hero stat numbers: red pops on the light bg, but reads as light grey in dark mode */
+.dark .hero-stat .num { color: #cbd0da; }
