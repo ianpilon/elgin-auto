@@ -33,7 +33,7 @@ const LANG_CLAUSE = {
 };
 const GREETINGS = {
   en: "Thanks for calling Elgin Auto Sales and Service. I'm the shop's AI booking assistant, and I can book your appointment right now. What do you need done today?",
-  pt: "Obrigado por ligar para a Elgin Auto Sales and Service. Sou o assistente virtual de agendamentos da oficina e posso marcar o seu serviço agora mesmo. Em que posso ajudar hoje?",
+  pt: "Obrigado por ligar para a Elgin Auto Sales and Service. Sou o assistente de inteligência artificial da oficina e posso marcar o seu serviço agora mesmo. Em que posso ajudar hoje?",
 };
 const STT_LANG = { en: "en", pt: "pt" };
 let currentLang = "en";
