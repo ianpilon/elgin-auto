@@ -1795,13 +1795,16 @@ footer p {
 .dark .closing,
 .dark footer { background: #0b0f17; }
 
-/* phone mockup keeps a bright screen so the chat stays readable in both themes */
-.dark .phone-screen { background: #f3f4f7; }
-.dark .rv-brand,
-.dark .rv-bubble.bot { color: #0a0f1a; }
-.dark .rv-status,
-.dark .rv-hint { color: #6b7394; }
-.dark .rv-dot { background: #6b7394; }
+/* phone mockup: dark screen UI in dark mode.
+   .rv-brand/.rv-status/.rv-hint/.rv-dot use var(--ink)/(--muted), which are
+   already light in dark mode, so they read correctly on the dark screen. */
+.dark .phone-screen { background: #12161d; }
+.dark .rv-bar { border-bottom-color: rgba(255,255,255,0.08); }
+.dark .rv-bubble.bot {
+    background: #222a38;
+    color: #eef1f6;
+    box-shadow: none;
+}
 
 /* compact theme toggle in the nav */
 .theme-toggle {
