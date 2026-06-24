@@ -4,14 +4,19 @@ A forwardable sales demo: an Elgin Auto-branded landing page that pitches an AI 
 
 The page is framed as a pitch to Elgin Auto (problem → before/after → response-time research → their own service list, already configured → how it works → timeline → revenue calculator → pricing), with a `pricing.html` page and a "Book a Meeting with Ian" cal.com CTA throughout.
 
-> Cloned from the Kingsway Service Centre demo (itself built on [ReserveVoice-v2](https://github.com/ianpilon/ReserveVoice-v2)) as a starting template for a new shop.
+> Cloned from the Kingsway Service Centre demo (itself built on [ReserveVoice-v2](https://github.com/ianpilon/ReserveVoice-v2)) and tailored for Elgin Auto.
 
-## Fill in for this shop
-This is a template. Before forwarding, set the shop's real details:
-- **Location / area** — add the shop's town wherever it fits (hero, services, FAQ).
-- **Phone number** — if you want the voice agent to read out a number, add it back to `SYSTEM_PROMPT` in `voice.js` (removed from the template so it can't give a wrong one).
-- **Services & prices** — the 18 services and the $45.99 oil-change figure are carried over; adjust to match Elgin Auto.
-- **Pricing** — currently $299/mo with a $199 founding rate; tune to the shop.
+## Configured for this shop
+- **Elgin Auto Sales & Service Ltd**, 561 Clyde Rd, Cambridge, ON. Owners Paulo (Paul) Figueiredo & Walter Pires.
+- **Phone:** (519) 622-7312 (the voice agent will read it out if asked).
+- **Services (6):** oil changes, engine repairs, alignments, tires, A/C repairs, technical diagnostics, any make or model.
+- **Brand:** black + red (red accent `#d61f26`), matching their logo.
+- **Pricing:** $299/mo with a $199 founding rate for the first three months.
+- **Hook:** their own job post is hiring an office admin to "answer phones & book customer appointments" — exactly this. The pitch leans on time-back and the Portuguese/English bilingual angle.
+
+## Still to do before production
+- Deploy your own Worker and update `window.RESERVE_CONFIG.workerUrl` (currently the shared proxy).
+- Connect the booking flow to the shop's real calendar (the agent confirms verbally only today).
 
 ## How it works
 

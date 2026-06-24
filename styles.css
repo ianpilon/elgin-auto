@@ -4,11 +4,11 @@
     --ink: #0a0f1a;
     --slate: #3d4663;
     --muted: #6b7394;
-    --surface: #eef2f8;
-    --accent: #1f5da6;
-    --accent-light: #e7f0fa;
-    --glow: #f0bb3c;
-    --warm: #f3f7fc;
+    --surface: #f1f1f3;
+    --accent: #d61f26;
+    --accent-light: #fdeaea;
+    --glow: #d61f26;
+    --warm: #f6f6f8;
     --danger: #dc3545;
     --danger-light: #fff0f0;
 }
@@ -16,7 +16,7 @@
 body {
     font-family: 'DM Sans', sans-serif;
     color: var(--ink);
-    background: #f4f7fb;
+    background: #f5f5f6;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
 }
@@ -32,7 +32,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(244,247,251,0.85);
+    background: rgba(247,247,248,0.85);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(0,0,0,0.04);
 }
@@ -74,9 +74,9 @@ nav {
 }
 
 .nav-cta:hover {
-    background: #174a85;
+    background: #ad1a20;
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(31, 93, 166, 0.3);
+    box-shadow: 0 4px 16px rgba(214, 31, 38, 0.3);
 }
 
 .nav-cta-demo {
@@ -97,7 +97,7 @@ nav {
     background: var(--accent);
     color: #fff;
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(31, 93, 166, 0.3);
+    box-shadow: 0 4px 16px rgba(214, 31, 38, 0.3);
 }
 
 /* ---- HERO ---- */
@@ -206,9 +206,9 @@ nav {
 }
 
 .cta-primary:hover {
-    background: #174a85;
+    background: #ad1a20;
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(31, 93, 166, 0.35);
+    box-shadow: 0 8px 32px rgba(214, 31, 38, 0.35);
 }
 
 .cta-primary:active { transform: translateY(0); }
@@ -220,7 +220,7 @@ nav {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.05rem;
     font-weight: 600;
-    color: var(--ink);
+    color: #fff;
     background: var(--glow);
     padding: 18px 32px;
     border-radius: 12px;
@@ -236,14 +236,14 @@ nav {
 }
 
 @keyframes glowPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(240, 187, 60, 0.4); }
-    50% { box-shadow: 0 0 20px 4px rgba(240, 187, 60, 0.25); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(214, 31, 38, 0.4); }
+    50% { box-shadow: 0 0 20px 4px rgba(214, 31, 38, 0.25); }
 }
 
 .cta-demo:hover {
-    background: #fbbf24;
+    background: #ad1a20;
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(240, 187, 60, 0.4);
+    box-shadow: 0 8px 32px rgba(214, 31, 38, 0.4);
 }
 
 .cta-demo:active { transform: translateY(0); }
@@ -283,7 +283,7 @@ button.cta-closing-demo { cursor: pointer; }
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background: var(--ink);
+    background: #fff;
     display: inline-block;
     flex-shrink: 0;
 }
@@ -726,7 +726,7 @@ button.cta-closing-demo { cursor: pointer; }
     background: #fff;
     border: 3px solid var(--accent);
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(31, 93, 166, 0.25);
+    box-shadow: 0 2px 8px rgba(214, 31, 38, 0.25);
     transition: transform 0.15s ease;
 }
 
@@ -740,7 +740,7 @@ button.cta-closing-demo { cursor: pointer; }
     background: #fff;
     border: 3px solid var(--accent);
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(31, 93, 166, 0.25);
+    box-shadow: 0 2px 8px rgba(214, 31, 38, 0.25);
 }
 
 .calc-range {
@@ -1085,7 +1085,7 @@ button.cta-closing-demo { cursor: pointer; }
 .cta-closing:hover {
     background: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 8px 40px rgba(240, 187, 60, 0.3);
+    box-shadow: 0 8px 40px rgba(214, 31, 38, 0.3);
 }
 
 .cta-closing:active { transform: translateY(0); }
@@ -1452,7 +1452,7 @@ footer p {
 
 .payback-card.return {
     background: var(--accent-light);
-    border-color: rgba(31, 93, 166, 0.15);
+    border-color: rgba(214, 31, 38, 0.15);
 }
 
 .payback-card-head {
@@ -1478,7 +1478,7 @@ footer p {
 }
 
 .payback-card.return .payback-icon {
-    background: rgba(31, 93, 166, 0.15);
+    background: rgba(214, 31, 38, 0.15);
     color: var(--accent);
 }
 
@@ -1500,7 +1500,7 @@ footer p {
 }
 
 .payback-card.return .payback-row {
-    border-bottom-color: rgba(31, 93, 166, 0.12);
+    border-bottom-color: rgba(214, 31, 38, 0.12);
 }
 
 .payback-row.total {
