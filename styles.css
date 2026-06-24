@@ -1825,3 +1825,31 @@ footer p {
 }
 .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
 .dark .theme-toggle { border-color: rgba(255,255,255,0.18); }
+
+/* ============================================================
+   Bilingual demo buttons: English = outline/ghost (like the theme
+   toggle), Portuguese = solid red. Gives the pair clear contrast.
+   Active/connecting states still use the shared .vapi-call-btn rules.
+   ============================================================ */
+.cta-demo[data-lang="en"][data-state="idle"] {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid rgba(0,0,0,0.18);
+    box-shadow: none;
+    animation: none;            /* only the red PT button pulses */
+}
+.cta-demo[data-lang="en"][data-state="idle"]:hover {
+    background: transparent;
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: none;
+}
+.cta-demo[data-lang="en"][data-state="idle"] .vapi-dot { background: var(--ink); }
+.dark .cta-demo[data-lang="en"][data-state="idle"] { border-color: rgba(255,255,255,0.22); }
+
+/* Closing section (dark): make PT solid red so it stands out from the outline English one */
+.cta-closing-demo[data-lang="pt"][data-state="idle"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
