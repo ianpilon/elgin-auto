@@ -38,6 +38,12 @@ const GREETINGS = {
 const STT_LANG = { en: "en", pt: "pt" };
 let currentLang = "en";
 
+// Portuguese runs on Vapi (native pt-PT voice via the paid Vapi account). English stays on the stack above.
+const VAPI_PUBLIC_KEY = (window.RESERVE_CONFIG && window.RESERVE_CONFIG.vapiPublicKey) || "";
+const VAPI_PT_ASSISTANT = (window.RESERVE_CONFIG && window.RESERVE_CONFIG.vapiPtAssistant) || "a4e944db-7ada-4b06-a906-9d71f9e19967";
+let vapi = null;          // lazy-loaded Vapi web client
+let vapiActive = false;   // true while a Vapi (Portuguese) call is running
+
 // ---- state ----
 const LABELS = { idle: "Talk to the AI in Your Browser", connecting: "Loading…", active: "End Call", error: "Try Again" };
 let state = "idle";
@@ -350,11 +356,44 @@ function endCall() {
   rvStatus("standby", false);
 }
 
+// ---- Portuguese call via Vapi (native pt-PT voice; Vapi runs its own STT/LLM/TTS loop) ----
+async function startVapi() {
+  if (!VAPI_PUBLIC_KEY) { logError("vapi", "missing public key"); setState("error"); return; }
+  setState("connecting");
+  try {
+    if (!vapi) {
+      const mod = await import("https://esm.sh/@vapi-ai/web");
+      const Vapi = mod.default || mod.Vapi || mod;
+      vapi = new Vapi(VAPI_PUBLIC_KEY);
+      vapi.on("call-start", () => { vapiActive = true; setState("active"); rvReset(); rvStatus("listening", true); });
+      vapi.on("call-end", () => { vapiActive = false; setState("idle"); rvStatus("standby", false); });
+      vapi.on("speech-start", () => rvStatus("speaking", true));   // assistant speaking
+      vapi.on("speech-end", () => rvStatus("listening", true));
+      vapi.on("message", (m) => {
+        if (m && m.type === "transcript" && m.transcriptType === "final" && m.transcript) {
+          rvBubble(m.role === "user" ? "user" : "bot", m.transcript);
+        }
+      });
+      vapi.on("error", (err) => { logError("vapi", err); vapiActive = false; setState("error"); });
+    }
+    await vapi.start(VAPI_PT_ASSISTANT);
+  } catch (e) { logError("vapi-start", e); setState("error"); }
+}
+
+function stopVapi() {
+  try { if (vapi) vapi.stop(); } catch {}
+  vapiActive = false;
+  setState("idle");
+  rvStatus("standby", false);
+}
+
 async function handleClick(e) {
   if (state === "connecting") return;
-  if (state === "active") return endCall();
+  if (state === "active") return vapiActive ? stopVapi() : endCall();
   const btn = e && e.currentTarget;
-  await startCall(btn && btn.dataset ? btn.dataset.lang : "en");
+  const lang = btn && btn.dataset ? btn.dataset.lang : "en";
+  if (lang === "pt") return startVapi();   // Portuguese → Vapi
+  await startCall("en");                    // English → built-in stack
 }
 
 document.querySelectorAll(".vapi-call-btn").forEach((btn) => btn.addEventListener("click", handleClick));

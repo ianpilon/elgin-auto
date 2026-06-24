@@ -19,7 +19,7 @@ const TTS_VOICE = "aura-2-arcas-en";               // Deepgram Aura-2, American 
 const ELEVEN_MODEL = "eleven_multilingual_v2";     // ElevenLabs multilingual model
 // Paste a NATIVE European Portuguese (pt-PT) voice id from the ElevenLabs Voice Library
 // (Voices → filter Language = Portuguese, Accent = Portugal). Replace the placeholder below.
-const ELEVEN_VOICE_ID = "REPLACE_WITH_PT_PT_VOICE_ID";
+const ELEVEN_VOICE_ID = "5tqq6ewvJtcNtaffrqUJ"; // native European Portuguese (pt-PT)
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",

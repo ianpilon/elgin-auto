@@ -196,11 +196,15 @@
     </footer>
 
     <script>
-      window.RESERVE_CONFIG = { workerUrl: "https://reservevoice-brain.ianpilon.workers.dev" };
+      window.RESERVE_CONFIG = {
+        workerUrl: "https://reservevoice-brain.ianpilon.workers.dev",
+        vapiPublicKey: "PASTE_VAPI_PUBLIC_KEY",
+        vapiPtAssistant: "a4e944db-7ada-4b06-a906-9d71f9e19967"
+      };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.wasm.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.29/dist/bundle.min.js"></script>
-    <script type="module" src="voice.js?v=5"></script>
+    <script type="module" src="voice.js?v=6"></script>
     <script>
     (function(){
       var b=document.getElementById('theme-toggle');
