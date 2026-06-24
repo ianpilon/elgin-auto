@@ -13,7 +13,7 @@ const GROQ_STT = "https://api.groq.com/openai/v1/audio/transcriptions";
 const DEEPGRAM_TTS = "https://api.deepgram.com/v1/speak"; // fast hosted TTS, nothing downloads in the browser
 const CHAT_MODEL = "llama-3.3-70b-versatile";      // follows brevity + sounds more natural; ~200ms slower than 8b
 const STT_MODEL = "whisper-large-v3-turbo";        // ~$0.04/hr, far better accuracy than browser STT
-const TTS_VOICE = "aura-2-hera-en";                // Deepgram Aura-2, American female (English): smooth, warm, professional
+const TTS_VOICE = "aura-hera-en";                  // Deepgram Aura-1 Hera (English): fast (~0.25s) vs aura-2 (~1.5s)
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
