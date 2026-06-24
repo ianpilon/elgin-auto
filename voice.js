@@ -32,7 +32,7 @@ const LANG_CLAUSE = {
   pt: " Responda sempre em português, de forma natural e cordial, e diga os nomes dos serviços em português.",
 };
 const GREETINGS = {
-  en: "Thanks for calling Elgin Auto Sales and Service. I'm the shop's AI booking assistant, and I can book your appointment right now. What do you need done today?",
+  en: "Thanks for calling Elgin Auto Sales and Service. I'm the shop's AI booking assistant. Paul and Walter are both working on a car right now, so I'm covering the phones. What are you looking to get serviced today? I can get that started for you, I've got access to the openings on the shop's calendar.",
   pt: "Obrigado por ligar para a Elgin Auto Sales and Service. Sou o assistente de inteligência artificial da oficina e posso marcar o seu serviço agora mesmo. Em que posso ajudar hoje?",
 };
 const STT_LANG = { en: "en", pt: "pt" };
