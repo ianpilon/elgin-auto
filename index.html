@@ -62,7 +62,8 @@
                 <h1>Answer every call <em>without pulling a tech off the job.</em></h1>
                 <p class="hero-sub">Paul, Walter, and the team keep the bays full in Cambridge. But the phone rings while you're mid-repair, after you've closed, and on your day off. <strong>This AI picks up every time</strong>, books the appointment, and texts a confirmation. It does the front-desk job you're hiring for, without taking anyone off the work.</p>
                 <div class="hero-cta-row">
-                    <button type="button" class="cta-demo vapi-call-btn" data-state="idle"><span class="vapi-dot"></span> <span class="vapi-label">Talk to the AI in Your Browser</span></button>
+                    <button type="button" class="cta-demo vapi-call-btn" data-state="idle" data-lang="en" data-idle="Talk to the AI in English"><span class="vapi-dot"></span> <span class="vapi-label">Talk to the AI in English</span></button>
+                    <button type="button" class="cta-demo vapi-call-btn" data-state="idle" data-lang="pt" data-idle="Talk to the AI in Portuguese"><span class="vapi-dot"></span> <span class="vapi-label">Talk to the AI in Portuguese</span></button>
                 </div>
                 <span class="cta-subtext">Talk to the AI right now in your browser. No commitment. Your mic stays off until you click.</span>
                 <div class="hero-stat-row">
@@ -305,7 +306,8 @@
             <h2>Hear the AI book a service appointment yourself</h2>
             <p>Talk to the AI right here in your browser. Ask for an oil change next Tuesday, or to get the check-engine light read, and watch it take the booking. Then let's talk about putting it to work for Elgin Auto.</p>
             <div class="mid-cta-row">
-                <button type="button" class="cta-demo vapi-call-btn" data-state="idle"><span class="vapi-dot"></span> <span class="vapi-label">Talk to the AI in Your Browser</span></button>
+                <button type="button" class="cta-demo vapi-call-btn" data-state="idle" data-lang="en" data-idle="Talk to the AI in English"><span class="vapi-dot"></span> <span class="vapi-label">Talk to the AI in English</span></button>
+                    <button type="button" class="cta-demo vapi-call-btn" data-state="idle" data-lang="pt" data-idle="Talk to the AI in Portuguese"><span class="vapi-dot"></span> <span class="vapi-label">Talk to the AI in Portuguese</span></button>
                 <a href="https://cal.com/ian-pilon/physiovoice-20-min-intro-call" target="_blank" rel="noopener" class="cta-primary">Book a Free Meeting <span class="arrow">&rarr;</span></a>
             </div>
         </div>
@@ -514,7 +516,8 @@
         <p class="closing-pricing"><strong>$299 a month flat.</strong> No setup fee, no per-call charges. <a href="pricing.html">See full pricing &rarr;</a></p>
         <div class="closing-cta-row">
             <a href="https://cal.com/ian-pilon/physiovoice-20-min-intro-call" target="_blank" rel="noopener" class="cta-closing">Book Your Free Meeting <span class="arrow">&rarr;</span></a>
-            <button type="button" class="cta-closing-demo vapi-call-btn" data-state="idle"><span class="vapi-label">Talk to the AI in Your Browser</span></button>
+            <button type="button" class="cta-closing-demo vapi-call-btn" data-state="idle" data-lang="en" data-idle="Talk to the AI in English"><span class="vapi-label">Talk to the AI in English</span></button>
+            <button type="button" class="cta-closing-demo vapi-call-btn" data-state="idle" data-lang="pt" data-idle="Talk to the AI in Portuguese"><span class="vapi-label">Talk to the AI in Portuguese</span></button>
         </div>
     </section>
 
@@ -523,13 +526,14 @@
     </footer>
 
     <script>
-      // After deploying your own Worker, paste its URL here (e.g. https://elgin-brain.<you>.workers.dev).
-      // For now this points at an existing generic Groq/Deepgram proxy so the demo runs immediately.
+      // English runs on this shared Groq/Deepgram proxy right now.
+      // The PORTUGUESE button needs the Elgin worker (with OPENAI_API_KEY) deployed — see SETUP.md —
+      // then paste its URL here (e.g. https://elgin-brain.<you>.workers.dev) for both languages.
       window.RESERVE_CONFIG = { workerUrl: "https://reservevoice-brain.ianpilon.workers.dev" };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.wasm.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.29/dist/bundle.min.js"></script>
-    <script type="module" src="voice.js?v=4"></script>
+    <script type="module" src="voice.js?v=5"></script>
     <script>
     (function(){
       var b=document.getElementById('theme-toggle');

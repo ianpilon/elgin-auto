@@ -1,13 +1,17 @@
-# Elgin Auto — browser voice agent (Groq + Deepgram), no Vapi
+# Elgin Auto — browser voice agent (Groq + Deepgram + OpenAI), no Vapi
 
-A voice booking desk that takes auto-service appointments in the browser. Instant load (nothing heavy downloads), fast, and effectively free to run for a long time.
+A bilingual voice booking desk that takes auto-service appointments in the browser. Two buttons: **Talk to the AI in English** and **Talk to the AI in Portuguese**. The chosen language sets the greeting, the LLM's reply language, the transcription language, and the voice. Instant load, fast.
 
 ## Stack
-- **Listen:** Silero VAD in-browser (free) carves each utterance → **Groq Whisper** (`whisper-large-v3-turbo`) transcribes it, via the Worker
-- **Think:** **Groq** `llama-3.3-70b-versatile` (streamed) via the Worker
-- **Speak:** **Deepgram Aura-2** (`aura-2-arcas-en`, American male) via the Worker — hosted, ~0.3s, nothing downloads to the browser
-- **Barge-in:** talk over the agent and it stops, with echo verification so it never cuts itself off
-- **Backend:** one Cloudflare Worker (`worker/`) that hides both API keys and serves `/chat`, `/stt`, `/tts`
+- **Listen:** Silero VAD in-browser (free) carves each utterance → **Groq Whisper** (`whisper-large-v3-turbo`) transcribes it. Language is passed per call (`?lang=en|pt`).
+- **Think:** **Groq** `llama-3.3-70b-versatile` (streamed); a language clause tells it to answer in English or Portuguese.
+- **Speak:**
+  - **English** → **Deepgram Aura-2** (`aura-2-arcas-en`), hosted, ~0.3s.
+  - **Portuguese** → **OpenAI TTS** (`tts-1`, voice `onyx`). Deepgram Aura has no Portuguese voice, so the PT button uses OpenAI.
+- **Barge-in:** talk over the agent and it stops, with echo verification so it never cuts itself off.
+- **Backend:** one Cloudflare Worker (`worker/`) that hides the keys and serves `/chat`, `/stt`, `/tts`.
+
+> **English works on the shared proxy today.** The Portuguese button only works once Elgin's own worker (with `OPENAI_API_KEY`) is deployed and its URL is pasted into `index.html`.
 
 In-browser libs (CDN `<script>` tags in `index.html`): `onnxruntime-web@1.22.0` + `@ricky0123/vad-web@0.0.29` (small). No TTS model in the browser.
 
@@ -17,23 +21,25 @@ In-browser libs (CDN `<script>` tags in `index.html`): `onnxruntime-web@1.22.0` 
 
 ## Deploy / run
 
-### Worker (the backend) — set both secrets, then deploy
+### Worker (the backend) — set secrets, then deploy
 ```bash
 cd worker
 npx wrangler login
 npx wrangler secret put GROQ_API_KEY       # free key from console.groq.com
 npx wrangler secret put DEEPGRAM_API_KEY   # free key from console.deepgram.com ($200 credit)
+npx wrangler secret put OPENAI_API_KEY     # platform.openai.com — only the Portuguese voice needs it
 npx wrangler deploy                         # prints https://elgin-brain.<you>.workers.dev
 ```
-Put that URL in `index.html` → `window.RESERVE_CONFIG.workerUrl`.
+Put that URL in `index.html` → `window.RESERVE_CONFIG.workerUrl`. Paste the key straight into Wrangler, never back into chat.
 
 ### Frontend
 - Local test (Chrome): `python3 -m http.server 5500 --bind 127.0.0.1`, open http://127.0.0.1:5500
 - Public: `git push` (GitHub Pages serves it). Bump the `?v=` on the `voice.js` tag in `index.html` each deploy so browsers fetch the new build.
 
 ## Tuning
-- Persona / wording: `SYSTEM_PROMPT`, `GREETING` (in `voice.js`)
-- Voice: `TTS_VOICE` in `worker/src/index.js` (any Deepgram Aura model, e.g. `aura-2-thalia-en`)
+- Persona / wording / greetings: `SYSTEM_PROMPT_BASE`, `GREETINGS`, `LANG_CLAUSE` (in `voice.js`)
+- English voice: `TTS_VOICE` in `worker/src/index.js` (any Deepgram Aura model, e.g. `aura-2-thalia-en`)
+- Portuguese voice: `OPENAI_TTS_VOICE` / `OPENAI_TTS_MODEL` in `worker/src/index.js` (e.g. voice `nova`, model `gpt-4o-mini-tts`)
 - Chat model / brevity: `CHAT_MODEL`, `max_tokens` in `worker/src/index.js`
 - Turn-end snappiness vs clipping: `redemptionFrames` in `loadVAD` (voice.js)
 - Noise/phantom-word rejection: `MIN_RMS`, `MAX_NO_SPEECH`, `MIN_AVG_LOGPROB` (voice.js)

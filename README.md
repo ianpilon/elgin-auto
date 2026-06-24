@@ -14,8 +14,11 @@ The page is framed as a pitch to Elgin Auto (problem → before/after → respon
 - **Pricing:** $299/mo with a $199 founding rate for the first three months.
 - **Hook:** their own job post is hiring an office admin to "answer phones & book customer appointments" — exactly this. The pitch leans on time-back and the Portuguese/English bilingual angle.
 
+## Bilingual (English / Portuguese)
+Two buttons start the call in either language. Each sets the greeting, the LLM reply language, the Whisper transcription language, and the voice. **English** uses Deepgram and works on the shared proxy today. **Portuguese** uses OpenAI TTS (Deepgram has no Portuguese voice), so it needs Elgin's own `elgin-brain` worker with an `OPENAI_API_KEY` — see SETUP.md.
+
 ## Still to do before production
-- Deploy your own Worker and update `window.RESERVE_CONFIG.workerUrl` (currently the shared proxy).
+- Deploy the `elgin-brain` worker (adds `OPENAI_API_KEY`) and point `window.RESERVE_CONFIG.workerUrl` at it — required for the Portuguese button; English already works.
 - Connect the booking flow to the shop's real calendar (the agent confirms verbally only today).
 
 ## How it works

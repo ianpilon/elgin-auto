@@ -12,7 +12,7 @@ const CHAT_URL = BASE + "/chat";
 const STT_URL = BASE + "/stt";
 const TTS_URL = BASE + "/tts";
 const LOG_URL = BASE + "/log";
-const SYSTEM_PROMPT =
+const SYSTEM_PROMPT_BASE =
   "You are Elgin Auto Sales and Service's AI booking assistant, taking a service appointment over the phone. " +
   "Elgin Auto is a trusted local auto repair shop in Cambridge, Ontario, phone 519-622-7312, that services any make or model. " +
   "It handles: oil changes, engine repairs, wheel alignments, tires (changes, rotation, balancing, inspection), " +
@@ -25,7 +25,18 @@ const SYSTEM_PROMPT =
   "a preferred day and time, their name, their phone number. " +
   "When you have all of those, warmly confirm the appointment in one sentence and wrap up. " +
   "If they speak after that, keep it brief and friendly. No lists, markdown, or stiff phrasing.";
-const GREETING = "Thanks for calling Elgin Auto Sales and Service. I'm the shop's AI booking assistant, and I can book your appointment right now. What do you need done today?";
+
+// Language is chosen by which button starts the call (English vs Portuguese).
+const LANG_CLAUSE = {
+  en: " Respond only in English.",
+  pt: " Responda sempre em português, de forma natural e cordial, e diga os nomes dos serviços em português.",
+};
+const GREETINGS = {
+  en: "Thanks for calling Elgin Auto Sales and Service. I'm the shop's AI booking assistant, and I can book your appointment right now. What do you need done today?",
+  pt: "Obrigado por ligar para a Elgin Auto Sales and Service. Sou o assistente virtual de agendamentos da oficina e posso marcar o seu serviço agora mesmo. Em que posso ajudar hoje?",
+};
+const STT_LANG = { en: "en", pt: "pt" };
+let currentLang = "en";
 
 // ---- state ----
 const LABELS = { idle: "Talk to the AI in Your Browser", connecting: "Loading…", active: "End Call", error: "Try Again" };
@@ -64,7 +75,7 @@ function setState(s) {
   document.querySelectorAll(".vapi-call-btn").forEach((btn) => {
     btn.dataset.state = s;
     const label = btn.querySelector(".vapi-label");
-    if (label) label.textContent = LABELS[s] || LABELS.idle;
+    if (label) label.textContent = s === "idle" ? (btn.dataset.idle || LABELS.idle) : (LABELS[s] || LABELS.idle);
   });
 }
 
@@ -111,7 +122,7 @@ async function synth(text, gen) {
     const res = await fetch(TTS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: text.trim() }),
+      body: JSON.stringify({ text: text.trim(), lang: currentLang }),
     });
     if (!res.ok) throw new Error("tts " + res.status);
     return await res.blob();
@@ -157,7 +168,7 @@ async function think(text, gen) {
   const res = await fetch(CHAT_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: [{ role: "system", content: SYSTEM_PROMPT }, ...history] }),
+    body: JSON.stringify({ messages: [{ role: "system", content: SYSTEM_PROMPT_BASE + LANG_CLAUSE[currentLang] }, ...history] }),
     signal: chatController.signal,
   });
   if (!res.ok || !res.body) throw new Error("chat " + res.status);
@@ -206,7 +217,7 @@ function encodeWav(f32, rate = 16000) {
 }
 
 async function transcribe(f32) {
-  const res = await fetch(STT_URL, { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: encodeWav(f32) });
+  const res = await fetch(STT_URL + "?lang=" + STT_LANG[currentLang], { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: encodeWav(f32) });
   if (!res.ok) throw new Error("stt " + res.status);
   const j = await res.json();
   return { text: j.text || "", noSpeechProb: j.noSpeechProb ?? 0, avgLogprob: j.avgLogprob ?? 0 };
@@ -302,7 +313,8 @@ async function loadVAD() {
 }
 
 // ---- call control ----
-async function startCall() {
+async function startCall(lang) {
+  currentLang = lang === "pt" ? "pt" : "en";
   setState("connecting");
   try { micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
   catch (e) { logError("mic", e); setState("error"); return; }
@@ -314,9 +326,10 @@ async function startCall() {
 
   // Speak the greeting with the mic NOT yet listening, so the VAD can't trip and invalidate it.
   const gen = ++turnGen;
-  agentSpeechText = GREETING; // so the echo-matcher recognizes the greeting bouncing back
-  await enqueueSpeech(GREETING, gen); // greeting bubble appears when it starts speaking (in playAudio)
-  history.push({ role: "assistant", content: GREETING });
+  const greeting = GREETINGS[currentLang];
+  agentSpeechText = greeting; // so the echo-matcher recognizes the greeting bouncing back
+  await enqueueSpeech(greeting, gen); // greeting bubble appears when it starts speaking (in playAudio)
+  history.push({ role: "assistant", content: greeting });
 
   // Let the speakers settle so the greeting's tail isn't captured as the caller's first answer.
   await new Promise((r) => setTimeout(r, 500));
@@ -337,10 +350,11 @@ function endCall() {
   rvStatus("standby", false);
 }
 
-async function handleClick() {
+async function handleClick(e) {
   if (state === "connecting") return;
   if (state === "active") return endCall();
-  await startCall();
+  const btn = e && e.currentTarget;
+  await startCall(btn && btn.dataset ? btn.dataset.lang : "en");
 }
 
 document.querySelectorAll(".vapi-call-btn").forEach((btn) => btn.addEventListener("click", handleClick));
