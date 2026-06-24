@@ -15,10 +15,10 @@ The page is framed as a pitch to Elgin Auto (problem → before/after → respon
 - **Hook:** their own job post is hiring an office admin to "answer phones & book customer appointments" — exactly this. The pitch leans on time-back and the Portuguese/English bilingual angle.
 
 ## Bilingual (English / Portuguese)
-Two buttons start the call in either language. Each sets the greeting, the LLM reply language, the Whisper transcription language, and the voice. **English** uses Deepgram and works on the shared proxy today. **Portuguese** uses OpenAI TTS (Deepgram has no Portuguese voice), so it needs Elgin's own `elgin-brain` worker with an `OPENAI_API_KEY` — see SETUP.md.
+Two buttons start the call in either language. Each sets the greeting, the LLM reply language, the Whisper transcription language, and the voice. **English** uses Deepgram and works on the shared proxy today. **Portuguese** uses **ElevenLabs** with a native European Portuguese (pt-PT) voice (Deepgram/OpenAI only read Portuguese with an accent), so it needs Elgin's own `elgin-brain` worker with an `ELEVENLABS_API_KEY` and a pt-PT voice id — see SETUP.md.
 
 ## Still to do before production
-- Deploy the `elgin-brain` worker (adds `OPENAI_API_KEY`) and point `window.RESERVE_CONFIG.workerUrl` at it — required for the Portuguese button; English already works.
+- Deploy the `elgin-brain` worker (adds `ELEVENLABS_API_KEY` + a pt-PT `ELEVEN_VOICE_ID`) and point `window.RESERVE_CONFIG.workerUrl` at it — required for the Portuguese button; English already works.
 - Connect the booking flow to the shop's real calendar (the agent confirms verbally only today).
 
 ## How it works

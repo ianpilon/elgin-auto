@@ -1,23 +1,25 @@
 // Elgin Auto "brain" — Cloudflare Worker. Hides the Groq + Deepgram + OpenAI keys and serves these routes:
 //   POST /chat        → Groq LLM (streamed reply)
 //   POST /stt?lang=   → Groq Whisper (transcribe a WAV clip; lang "en" or "pt", default en)
-//   POST /tts {lang}  → English: Deepgram Aura;  Portuguese: OpenAI TTS (Deepgram has no PT voice)
+//   POST /tts {lang}  → English: Deepgram Aura;  Portuguese: ElevenLabs (native European Portuguese voice)
 // This is the only backend. Structured so Twilio telephony can be added later.
 //
 // Deploy:  cd worker && npx wrangler deploy
 // Secrets: npx wrangler secret put GROQ_API_KEY
 //          npx wrangler secret put DEEPGRAM_API_KEY
-//          npx wrangler secret put OPENAI_API_KEY   (only needed for the Portuguese voice)
+//          npx wrangler secret put ELEVENLABS_API_KEY   (only needed for the Portuguese voice)
 
 const GROQ_CHAT = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_STT = "https://api.groq.com/openai/v1/audio/transcriptions";
 const DEEPGRAM_TTS = "https://api.deepgram.com/v1/speak"; // fast hosted TTS, nothing downloads in the browser
-const OPENAI_TTS = "https://api.openai.com/v1/audio/speech"; // used for Portuguese (Deepgram Aura has no PT voice)
+const ELEVEN_TTS = "https://api.elevenlabs.io/v1/text-to-speech"; // Portuguese (Deepgram/OpenAI lack a native PT voice)
 const CHAT_MODEL = "llama-3.3-70b-versatile";      // follows brevity + sounds more natural; ~200ms slower than 8b
 const STT_MODEL = "whisper-large-v3-turbo";        // ~$0.04/hr, far better accuracy than browser STT
 const TTS_VOICE = "aura-2-arcas-en";               // Deepgram Aura-2, American male (English)
-const OPENAI_TTS_MODEL = "tts-1";                  // low-latency OpenAI TTS, good multilingual coverage
-const OPENAI_TTS_VOICE = "onyx";                   // male voice, to match the English voice
+const ELEVEN_MODEL = "eleven_multilingual_v2";     // ElevenLabs multilingual model
+// Paste a NATIVE European Portuguese (pt-PT) voice id from the ElevenLabs Voice Library
+// (Voices → filter Language = Portuguese, Accent = Portugal). Replace the placeholder below.
+const ELEVEN_VOICE_ID = "REPLACE_WITH_PT_PT_VOICE_ID";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -68,12 +70,12 @@ async function handleTTS(req, env) {
   try { body = await req.json(); } catch { return new Response("Bad JSON", { status: 400, headers: CORS }); }
   const text = body.text || "";
 
-  // Portuguese: Deepgram Aura has no PT voice, so use OpenAI TTS.
+  // Portuguese: ElevenLabs with a native European Portuguese voice (Deepgram/OpenAI only "read" PT with an accent).
   if (body.lang === "pt") {
-    const r = await fetch(OPENAI_TTS, {
+    const r = await fetch(`${ELEVEN_TTS}/${ELEVEN_VOICE_ID}?output_format=mp3_44100_128`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: OPENAI_TTS_MODEL, voice: OPENAI_TTS_VOICE, input: text, response_format: "mp3" }),
+      headers: { "xi-api-key": env.ELEVENLABS_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ text, model_id: ELEVEN_MODEL }),
     });
     if (!r.ok) { const e = await r.text(); console.log("TTS PT ERROR", r.status, e.slice(0, 200)); return new Response(e, { status: r.status, headers: CORS }); }
     return new Response(r.body, { headers: { ...CORS, "Content-Type": "audio/mpeg" } });
