@@ -1802,6 +1802,8 @@ footer p {
 /* Phone bezel matches the gray speech bubble so the outline stands out from the black page */
 .dark .phone-mockup,
 .dark .phone-mockup::before { background: #222a38; }
+/* Subtle red-tinted halo behind the phone for extra separation from the black page */
+.dark .phone-mockup { box-shadow: 0 0 150px 28px rgba(214,31,38,0.38), 0 24px 60px rgba(0,0,0,0.5); }
 .dark .rv-bar { border-bottom-color: rgba(255,255,255,0.08); }
 .dark .rv-bubble.bot {
     background: #222a38;
