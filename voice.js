@@ -134,11 +134,14 @@ function beep() {
 // Synthesize a chunk immediately so it's ready (or already in flight) by the time it's its turn to play.
 async function synth(text, gen) {
   if (gen !== turnGen || !text.trim()) return null;
+  // Spoken-only respelling: Deepgram reads "Elgin" as soft-g "el-jin"; "Elghin" forces the
+  // correct hard g. This affects the audio only — the on-screen transcript keeps "Elgin".
+  const spoken = text.trim().replace(/\bElgin\b/gi, "Elghin");
   try {
     const res = await fetch(TTS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: text.trim(), lang: currentLang, ...(currentLang === "en" && englishVoice ? { voice: englishVoice } : {}) }),
+      body: JSON.stringify({ text: spoken, lang: currentLang, ...(currentLang === "en" && englishVoice ? { voice: englishVoice } : {}) }),
     });
     if (!res.ok) throw new Error("tts " + res.status);
     return await res.blob();
