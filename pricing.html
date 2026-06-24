@@ -19,7 +19,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=3">
+    <script>(function(){try{if(localStorage.getItem('elgin-theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}})();</script>
+    <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
     <nav>
@@ -28,6 +29,7 @@
             <div class="nav-tag">AI Booking Desk</div>
         </div>
         <div class="nav-right">
+            <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">&#9790; Dark</button>
             <a href="index.html" class="nav-link">&larr; Back to Home</a>
             <a href="pricing.html" class="nav-link active">Pricing</a>
             <a href="https://cal.com/ian-pilon/physiovoice-20-min-intro-call" target="_blank" rel="noopener" class="nav-cta">Book a Meeting with Ian</a>
@@ -197,5 +199,18 @@
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.wasm.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.29/dist/bundle.min.js"></script>
     <script type="module" src="voice.js?v=4"></script>
+    <script>
+    (function(){
+      var b=document.getElementById('theme-toggle');
+      if(!b) return;
+      function label(){ b.innerHTML = document.documentElement.classList.contains('dark') ? '&#9728; Light' : '&#9790; Dark'; }
+      label();
+      b.addEventListener('click', function(){
+        document.documentElement.classList.toggle('dark');
+        try{ localStorage.setItem('elgin-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); }catch(e){}
+        label();
+      });
+    })();
+    </script>
 </body>
 </html>

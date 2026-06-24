@@ -1743,3 +1743,79 @@ footer p {
     padding-left: 14px;
     border-left: 1px solid rgba(0,0,0,0.12);
 }
+
+/* ============================================================
+   DARK THEME  (toggled via `.dark` on <html>; light is default)
+   Palette: near-black navy bg, white headings, gray body, red accent.
+   ============================================================ */
+:root.dark {
+    --ink: #f2f4f8;        /* headings + body text become light */
+    --slate: #b4bccd;      /* secondary text */
+    --muted: #8b94a4;      /* tertiary text */
+    --surface: #0e131d;    /* section panels */
+    --warm: #11161f;       /* alternating panels */
+    --accent: #ef3b40;     /* red, brightened a touch for dark bg */
+    --accent-light: #2a1416; /* dark red tint (hero badge bg) */
+    --glow: #e5343a;       /* red action button */
+}
+
+.dark body { background: #0b0f17; }
+
+.dark nav {
+    background: rgba(11,15,23,0.85);
+    border-bottom-color: rgba(255,255,255,0.06);
+}
+
+/* hardcoded white cards -> raised dark cards */
+.dark .problem-card,
+.dark .timeline-card,
+.dark .contrast-card.bad,
+.dark .contrast-card.good,
+.dark .payback-card,
+.dark .calc-controls,
+.dark .result-card.lost,
+.dark .revenue {
+    background: #161c28;
+    border-color: rgba(255,255,255,0.08);
+}
+
+/* borders that were black-on-light */
+.dark .faq-item,
+.dark .faq-item:first-of-type,
+.dark .how-step,
+.dark .rev-item,
+.dark .result-card,
+.dark .contrast-card,
+.dark .timeline-card { border-color: rgba(255,255,255,0.08); }
+
+/* active toggle pill in the calculator */
+.dark .calc-period button.active { background: var(--accent); color: #fff; }
+
+/* sections that use var(--ink) as a BACKGROUND must stay dark (ink is now light) */
+.dark .closing,
+.dark footer { background: #0b0f17; }
+
+/* phone mockup keeps a bright screen so the chat stays readable in both themes */
+.dark .phone-screen { background: #f3f4f7; }
+.dark .rv-brand,
+.dark .rv-bubble.bot { color: #0a0f1a; }
+.dark .rv-status,
+.dark .rv-hint { color: #6b7394; }
+.dark .rv-dot { background: #6b7394; }
+
+/* compact theme toggle in the nav */
+.theme-toggle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--slate);
+    background: transparent;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    padding: 8px 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.dark .theme-toggle { border-color: rgba(255,255,255,0.18); }
