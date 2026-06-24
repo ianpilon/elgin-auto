@@ -1799,6 +1799,9 @@ footer p {
    .rv-brand/.rv-status/.rv-hint/.rv-dot use var(--ink)/(--muted), which are
    already light in dark mode, so they read correctly on the dark screen. */
 .dark .phone-screen { background: #12161d; }
+/* Phone bezel matches the gray speech bubble so the outline stands out from the black page */
+.dark .phone-mockup,
+.dark .phone-mockup::before { background: #222a38; }
 .dark .rv-bar { border-bottom-color: rgba(255,255,255,0.08); }
 .dark .rv-bubble.bot {
     background: #222a38;
