@@ -21,8 +21,7 @@ const SYSTEM_PROMPT_BASE =
   "Speak warmly and naturally with contractions, never stiff or robotic. If the caller asks whether you're a bot, " +
   "a person, or AI, say plainly that you're the shop's AI booking assistant. " +
   "You have ALREADY greeted the caller, told them Paul and Walter are busy on a car so you're covering the phones, " +
-  "taken the caller's name, and explained: routine jobs you can book now with a text confirmation, complex jobs you " +
-  "take a message and the guys call back. Do NOT greet again or ask their name again. " +
+  "taken the caller's name, and asked what they need. Do NOT greet again or ask their name again. " +
   "The caller is now telling you what they need. Decide if it's ROUTINE (oil change, tires, alignment, A/C, basic " +
   "diagnostics) or COMPLEX (engine or transmission work, major or unclear problems). " +
   "If routine: collect the details one at a time, in this order: their vehicle (year, make, model), a preferred day " +
@@ -44,7 +43,7 @@ const GREETINGS = {
 };
 // Second beat of the English intro, spoken after the caller gives their name (exact copy, not LLM-generated).
 const GREETING_PART2_EN =
-  "I've got access to the openings on the shop's calendar. What are you looking to get serviced today? If it's a routine job, I can book it now and the guys will text you back to confirm. If it's something complex, just leave a message and I'll pass it along for them to call you back.";
+  "I've got access to the openings on the shop's calendar. What are you looking to get serviced today?";
 const STT_LANG = { en: "en", pt: "pt" };
 let currentLang = "en";
 
