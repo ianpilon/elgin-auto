@@ -1,7 +1,0 @@
-name = "elgin-brain"
-main = "src/index.js"
-compatibility_date = "2026-01-01"
-
-# Set the API keys as secrets, never committed:
-#   npx wrangler secret put GROQ_API_KEY
-#   npx wrangler secret put DEEPGRAM_API_KEY
