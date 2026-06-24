@@ -20,11 +20,18 @@ const SYSTEM_PROMPT_BASE =
   "If asked for the shop's phone number, give 519-622-7312. " +
   "Speak warmly and naturally with contractions, never stiff or robotic. If the caller asks whether you're a bot, " +
   "a person, or AI, say plainly that you're the shop's AI booking assistant. " +
-  "Keep each reply to one short sentence (about 12 words). Warmly acknowledge what they just said, then ask for the " +
-  "next detail, one at a time, in this order: what service they need, their vehicle (year, make, model), " +
-  "a preferred day and time, their name, their phone number. " +
-  "When you have all of those, warmly confirm the appointment in one sentence and wrap up. " +
-  "If they speak after that, keep it brief and friendly. No lists, markdown, or stiff phrasing.";
+  "You have ALREADY greeted the caller, told them Paul and Walter are busy on a car so you're covering the phones, " +
+  "taken the caller's name, and explained: routine jobs you can book now with a text confirmation, complex jobs you " +
+  "take a message and the guys call back. Do NOT greet again or ask their name again. " +
+  "The caller is now telling you what they need. Decide if it's ROUTINE (oil change, tires, alignment, A/C, basic " +
+  "diagnostics) or COMPLEX (engine or transmission work, major or unclear problems). " +
+  "If routine: collect the details one at a time, in this order: their vehicle (year, make, model), a preferred day " +
+  "and time, then their phone number for the text confirmation. Then warmly confirm the appointment in one sentence " +
+  "and say Paul and Walter will text to confirm. " +
+  "If complex: ask for a short description of the problem and their phone number, then say you'll pass it to Paul and " +
+  "Walter to call them back. " +
+  "Keep each reply to one short sentence (about 12 words). Use the caller's name naturally when it fits. Acknowledge " +
+  "what they just said, then ask for the next detail, one at a time. No lists, markdown, or stiff phrasing.";
 
 // Language is chosen by which button starts the call (English vs Portuguese).
 const LANG_CLAUSE = {
@@ -32,9 +39,12 @@ const LANG_CLAUSE = {
   pt: " Responda sempre em português, de forma natural e cordial, e diga os nomes dos serviços em português.",
 };
 const GREETINGS = {
-  en: "Thanks for calling Elgin Auto Sales and Service. I'm the shop's AI booking assistant. Paul and Walter are both working on a car right now, so I'm covering the phones. What are you looking to get serviced today? I can get that started for you, I've got access to the openings on the shop's calendar.",
+  en: "Thanks for calling Elgin Auto Sales and Service. I'm the shop's AI booking assistant. Paul and Walter are both working on a car right now, so I'm covering the phones. Can I get your name?",
   pt: "Obrigado por ligar para a Elgin Auto Sales and Service. Sou o assistente de inteligência artificial da oficina e posso marcar o seu serviço agora mesmo. Em que posso ajudar hoje?",
 };
+// Second beat of the English intro, spoken after the caller gives their name (exact copy, not LLM-generated).
+const GREETING_PART2_EN =
+  "I've got access to the openings on the shop's calendar. What are you looking to get serviced today? If it's a routine job, I can book it now and the guys will text you back to confirm. If it's something complex, just leave a message and I'll pass it along for them to call you back.";
 const STT_LANG = { en: "en", pt: "pt" };
 let currentLang = "en";
 
@@ -59,6 +69,7 @@ let vadObj = null;
 let micStream = null;
 let history = [];
 let callActive = false;
+let introPart2Pending = false; // true between the name question and the scripted second intro beat (English)
 let agentSpeaking = false;
 let processing = false;
 let currentAudioEl = null;
@@ -307,6 +318,21 @@ async function onSpeechEnd(f32) {
   processing = true;
   mark(`heard you: "${text}"`);
   rvBubble("user", text);
+
+  // First English reply is the caller's name → speak the scripted second intro beat (exact copy),
+  // record both turns in history, then hand the rest off to the LLM. No LLM call this turn.
+  if (introPart2Pending && currentLang === "en") {
+    introPart2Pending = false;
+    history.push({ role: "user", content: text });
+    history.push({ role: "assistant", content: GREETING_PART2_EN });
+    agentSpeechText = GREETING_PART2_EN;
+    rvStatus("speaking", true);
+    await enqueueSpeech(GREETING_PART2_EN, gen);
+    if (gen === turnGen) rvStatus("listening", true);
+    processing = false;
+    return;
+  }
+
   rvStatus("thinking", true);
   try { await think(text, gen); }
   catch (e) { if (!e || e.name !== "AbortError") logError("turn", e); }
@@ -340,6 +366,7 @@ async function startCall(lang) {
   try { vadObj = await loadVAD(); } catch (e) { logError("vad", e); setState("error"); return; }
 
   callActive = true; history = []; turnGen = 0;
+  introPart2Pending = true; // the caller's first reply is their name → triggers the scripted second beat
   setState("active");
   rvReset();
 
@@ -362,6 +389,7 @@ async function startCall(lang) {
 
 function endCall() {
   callActive = false;
+  introPart2Pending = false;
   stopAgent();
   if (vadObj) { try { vadObj.pause(); } catch {} }
   if (micStream) { try { micStream.getTracks().forEach((t) => t.stop()); } catch {} micStream = null; }

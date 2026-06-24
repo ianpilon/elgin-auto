@@ -47,7 +47,7 @@ async function handleChat(req, env) {
       messages: body.messages,
       stream: true,
       temperature: 0.4,
-      max_tokens: 40,
+      max_tokens: 60,
     }),
   });
   if (!r.ok) return new Response(await r.text(), { status: r.status, headers: CORS });
