@@ -526,12 +526,12 @@
     </footer>
 
     <script>
-      // English runs on this shared Groq/Deepgram proxy right now.
-      // The PORTUGUESE button needs the Elgin worker (ELEVENLABS_API_KEY + a pt-PT voice id) deployed — see SETUP.md —
-      // then paste its URL here (e.g. https://elgin-brain.<you>.workers.dev) for both languages.
+      // English runs on Elgin's OWN worker (this repo's worker/, deployed as elgin-brain) — fully decoupled.
+      // Portuguese runs on the Vapi assistant below (no worker/repo dependency).
       window.RESERVE_CONFIG = {
-        workerUrl: "https://reservevoice-brain.ianpilon.workers.dev", // English (Groq/Deepgram)
-        vapiPublicKey: "c7d496d8-e4fb-44fe-9ffe-755d41ae32c3",                       // Portuguese (Vapi) — publishable web key
+        workerUrl: "https://elgin-brain.ianpilon.workers.dev",        // English (Groq/Deepgram) — this repo's worker
+        englishVoice: "aura-2-hera-en",                             // Deepgram Aura-2 English voice (override per-request)
+        vapiPublicKey: "c7d496d8-e4fb-44fe-9ffe-755d41ae32c3",       // Portuguese (Vapi) — publishable web key
         vapiPtAssistant: "a4e944db-7ada-4b06-a906-9d71f9e19967"      // Elgin pt-PT assistant
       };
     </script>

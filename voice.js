@@ -38,6 +38,13 @@ const GREETINGS = {
 const STT_LANG = { en: "en", pt: "pt" };
 let currentLang = "en";
 
+// English voice (Deepgram Aura-2). Sent per-request so we can A/B voices with NO worker redeploy.
+// Precedence: ?voice= URL param > RESERVE_CONFIG.englishVoice > worker default.
+let englishVoice =
+  new URLSearchParams(location.search).get("voice") ||
+  (window.RESERVE_CONFIG && window.RESERVE_CONFIG.englishVoice) ||
+  "";
+
 // Portuguese runs on Vapi (native pt-PT voice via the paid Vapi account). English stays on the stack above.
 const VAPI_PUBLIC_KEY = (window.RESERVE_CONFIG && window.RESERVE_CONFIG.vapiPublicKey) || "";
 const VAPI_PT_ASSISTANT = (window.RESERVE_CONFIG && window.RESERVE_CONFIG.vapiPtAssistant) || "a4e944db-7ada-4b06-a906-9d71f9e19967";
@@ -131,7 +138,7 @@ async function synth(text, gen) {
     const res = await fetch(TTS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: text.trim(), lang: currentLang }),
+      body: JSON.stringify({ text: text.trim(), lang: currentLang, ...(currentLang === "en" && englishVoice ? { voice: englishVoice } : {}) }),
     });
     if (!res.ok) throw new Error("tts " + res.status);
     return await res.blob();
@@ -377,7 +384,14 @@ async function startVapi() {
           rvBubble(m.role === "user" ? "user" : "bot", m.transcript);
         }
       });
-      vapi.on("error", (err) => { logError("vapi", err); vapiActive = false; setState("error"); });
+      vapi.on("error", (err) => {
+        logError("vapi", err);
+        // The Vapi SDK fires a transient error on cold start even when the call connects fine.
+        // Only surface a fatal UI error if no call is live or being established; real failures
+        // still reject vapi.start() (handled below) or arrive as call-end, which resets the UI.
+        if (vapiActive || state === "connecting") return;
+        setState("error");
+      });
     }
     await vapi.start(VAPI_PT_ASSISTANT);
   } catch (e) { logError("vapi-start", e); setState("error"); }
@@ -401,3 +415,29 @@ async function handleClick(e) {
 }
 
 document.querySelectorAll(".vapi-call-btn").forEach((btn) => btn.addEventListener("click", handleClick));
+
+// ---- localhost-only English voice picker — audition Aura-2 voices live; never renders on the deployed demo ----
+(function voicePicker() {
+  if (!["localhost", "127.0.0.1"].includes(location.hostname)) return;
+  const VOICES = [
+    "aura-2-orion-en", "aura-2-arcas-en", "aura-2-hermes-en", "aura-2-zeus-en",
+    "aura-2-mars-en", "aura-2-orpheus-en", "aura-2-apollo-en", "aura-2-draco-en",
+    "aura-2-cordelia-en", "aura-2-hera-en", "aura-2-athena-en", "aura-2-luna-en", "aura-2-vesta-en",
+  ];
+  if (!englishVoice) englishVoice = "aura-2-orion-en";
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "position:fixed;bottom:12px;left:12px;z-index:9999;background:#111;color:#fff;border:1px solid #333;border-radius:8px;padding:8px 10px;font:12px system-ui,sans-serif";
+  wrap.innerHTML = '<label style="display:block;margin-bottom:4px;opacity:.7">English voice (local test)</label>';
+  const sel = document.createElement("select");
+  sel.style.cssText = "background:#000;color:#fff;border:1px solid #444;border-radius:6px;padding:4px 6px";
+  VOICES.forEach((v) => {
+    const o = document.createElement("option");
+    o.value = v; o.textContent = v.replace("aura-2-", "").replace("-en", "");
+    if (v === englishVoice) o.selected = true;
+    sel.appendChild(o);
+  });
+  sel.addEventListener("change", () => { englishVoice = sel.value; console.log("[voice] English voice →", englishVoice); });
+  wrap.appendChild(sel);
+  const mount = () => document.body.appendChild(wrap);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount); else mount();
+})();

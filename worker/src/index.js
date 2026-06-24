@@ -15,7 +15,7 @@ const DEEPGRAM_TTS = "https://api.deepgram.com/v1/speak"; // fast hosted TTS, no
 const ELEVEN_TTS = "https://api.elevenlabs.io/v1/text-to-speech"; // Portuguese (Deepgram/OpenAI lack a native PT voice)
 const CHAT_MODEL = "llama-3.3-70b-versatile";      // follows brevity + sounds more natural; ~200ms slower than 8b
 const STT_MODEL = "whisper-large-v3-turbo";        // ~$0.04/hr, far better accuracy than browser STT
-const TTS_VOICE = "aura-2-arcas-en";               // Deepgram Aura-2, American male (English)
+const TTS_VOICE = "aura-2-hera-en";                // Deepgram Aura-2, American female (English): smooth, warm, professional
 const ELEVEN_MODEL = "eleven_multilingual_v2";     // ElevenLabs multilingual model
 // Paste a NATIVE European Portuguese (pt-PT) voice id from the ElevenLabs Voice Library
 // (Voices → filter Language = Portuguese, Accent = Portugal). Replace the placeholder below.
