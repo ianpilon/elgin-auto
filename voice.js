@@ -43,6 +43,7 @@ const VAPI_PUBLIC_KEY = (window.RESERVE_CONFIG && window.RESERVE_CONFIG.vapiPubl
 const VAPI_PT_ASSISTANT = (window.RESERVE_CONFIG && window.RESERVE_CONFIG.vapiPtAssistant) || "a4e944db-7ada-4b06-a906-9d71f9e19967";
 let vapi = null;          // lazy-loaded Vapi web client
 let vapiActive = false;   // true while a Vapi (Portuguese) call is running
+let activeBtn = null;     // the button that started the current call (others hide during it)
 
 // ---- state ----
 const LABELS = { idle: "Talk to the AI in Your Browser", connecting: "Loading…", active: "End Call", error: "Try Again" };
@@ -78,10 +79,12 @@ window.RV_DUMP = () => console.table(window.RV_LOG);
 
 function setState(s) {
   state = s;
+  const hideOthers = (s === "connecting" || s === "active") && activeBtn; // one call running → show only its button
   document.querySelectorAll(".vapi-call-btn").forEach((btn) => {
     btn.dataset.state = s;
     const label = btn.querySelector(".vapi-label");
     if (label) label.textContent = s === "idle" ? (btn.dataset.idle || LABELS.idle) : (LABELS[s] || LABELS.idle);
+    btn.classList.toggle("vapi-hidden", hideOthers && btn !== activeBtn);
   });
 }
 
@@ -391,6 +394,7 @@ async function handleClick(e) {
   if (state === "connecting") return;
   if (state === "active") return vapiActive ? stopVapi() : endCall();
   const btn = e && e.currentTarget;
+  activeBtn = btn || null;                  // remember which button started it (others hide)
   const lang = btn && btn.dataset ? btn.dataset.lang : "en";
   if (lang === "pt") return startVapi();   // Portuguese → Vapi
   await startCall("en");                    // English → built-in stack

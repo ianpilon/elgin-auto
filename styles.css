@@ -1853,3 +1853,6 @@ footer p {
     border-color: var(--accent);
     color: #fff;
 }
+
+/* during an active/connecting call, hide the other demo buttons so only one "End Call" shows */
+.vapi-hidden { display: none !important; }
