@@ -1806,6 +1806,9 @@ footer p {
     box-shadow: none;
 }
 
+/* slider tracks: light grey for contrast on the dark calculator card */
+.dark .calc-slider { background: rgba(255,255,255,0.22); }
+
 /* compact theme toggle in the nav */
 .theme-toggle {
     font-family: 'Space Grotesk', sans-serif;
